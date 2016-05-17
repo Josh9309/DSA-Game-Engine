@@ -21,7 +21,6 @@ public:
 	bool gameLoop();
 	bool useShaders();
 	
-
 private:
 	GLFWwindow* GLFWwindowPtr;
 	GLuint vertArr;

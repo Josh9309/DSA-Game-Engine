@@ -1,4 +1,7 @@
 #include "Engine.h" 
+#include "Texture.h"
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 namespace {
 	std::map<int, bool> keyIsDown;
@@ -19,6 +22,19 @@ struct Vertex {
 	glm::vec3 loc;
 	glm::vec2 uv;
 };
+
+struct Transform {
+	glm::vec3 loc;
+	glm::vec3 rot;
+	glm::vec3 size;
+	glm::mat4 world; // object-world transform matrix
+};
+
+struct Object {
+	Transform transform;
+	std::string  textureFile;
+};
+
 
 Engine::Engine()
 {
@@ -54,6 +70,11 @@ bool Engine::init()
 		glfwTerminate();
 		return false;
 	}
+
+	//This Enables the Alpha Transparency for Blending 
+	//Some Graphic Techniques wont work with this on
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	return true;
 }
 
@@ -96,14 +117,6 @@ bool Engine::bufferModel()
 		vertBufData[i].loc = locs[locInds[i]];
 		vertBufData[i].uv = uvs[uvInds[i]];
 	}
-	
-	//COME BACK TO THIS IT IS NOT COMPLETE
-	/*std::vector<glm::vec3> vertBufData(vertCount);
-	for (unsigned int i = 0; i < vertCount; i++)
-	{
-		vertBufData[i] = locs[locInds[i]];
-
-	}*/
 
 	
 
@@ -142,107 +155,46 @@ bool Engine::bufferModel()
 
 bool Engine::gameLoop()
 {
-	//This sets up one texture
-	FIBITMAP* image = FreeImage_Load(FreeImage_GetFileType("TestTexture.png", 0), "TestTexture.png");
-	if (image == nullptr)
-	{
-		//load failed
-	}
 
-	FIBITMAP* image32Bit = FreeImage_ConvertTo32Bits(image);
-
-	FreeImage_Unload(image);
-
-	unsigned int texID;
-	glGenTextures(1, &texID);
-	glBindTexture(GL_TEXTURE_2D, texID);
-
-	//upload texture bytes
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		GL_SRGB_ALPHA,
-		FreeImage_GetWidth(image32Bit),
-		FreeImage_GetHeight(image32Bit),
-		0,
-		GL_BGRA,
-		GL_UNSIGNED_BYTE,
-		(void*)FreeImage_GetBits(image32Bit));
-
-	//set min filter to linear
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	FreeImage_Unload(image32Bit);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
+	Texture paint = Texture("paintTexture.jpg");
+	paint.LoadTexture();
 
 	//This sets up second texture
-	FIBITMAP* image2 = FreeImage_Load(FreeImage_GetFileType("paintTexture.jpg", 0), "paintTexture.jpg");
-	if (image == nullptr)
-	{
-		//load failed
-	}
+	Texture paperBlue = Texture("paper-blue.jpg");
+	paperBlue.LoadTexture();
 
-	FIBITMAP* image32Bit2 = FreeImage_ConvertTo32Bits(image2);
+	Texture redFruit = Texture("redFruit.png");
+	redFruit.LoadTexture();
 
-	FreeImage_Unload(image2);
+	Texture blueFruit = Texture("blueFruit.png");
+	Texture yellowFruit = Texture("yellowFruit.png");
+	Texture player = Texture("player.png");
+	
+	player.LoadTexture();
+	blueFruit.LoadTexture();
+	yellowFruit.LoadTexture();
+	//object creation
+	Object * objs = new Object[4];
 
-	unsigned int texID2;
-	glGenTextures(1, &texID2);
-	glBindTexture(GL_TEXTURE_2D, texID2);
+	objs[0].textureFile = "redFruit.png";
+	objs[0].transform.loc = glm::vec3(-.60, .30, 0); //center of screen
+	objs[0].transform.rot = glm::vec3(0, 0, 0);
+	objs[0].transform.size = glm::vec3(.1, .1, 1); //width, height, depth
 
-	//upload texture bytes
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		GL_SRGB_ALPHA,
-		FreeImage_GetWidth(image32Bit2),
-		FreeImage_GetHeight(image32Bit2),
-		0,
-		GL_BGRA,
-		GL_UNSIGNED_BYTE,
-		(void*)FreeImage_GetBits(image32Bit2));
+	objs[1].textureFile = "blueFruit.png";
+	objs[1].transform.loc = glm::vec3(.6, .6, 0); //center of screen
+	objs[1].transform.rot = glm::vec3(0, 0, 0);
+	objs[1].transform.size = glm::vec3(.10, .10, 1); //width, height, depth
 
-	//set min filter to linear
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	objs[2].textureFile = "yellowFruit.png";
+	objs[2].transform.loc = glm::vec3(0, .5, 0); //center of screen
+	objs[2].transform.rot = glm::vec3(0, 0, 0);
+	objs[2].transform.size = glm::vec3(.10, .10, 1); //width, height, depth
 
-	FreeImage_Unload(image32Bit2);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	//This sets up second texture
-	FIBITMAP* image3 = FreeImage_Load(FreeImage_GetFileType("paper-blue.jpg", 0), "paper-blue.jpg");
-	if (image3 == nullptr)
-	{
-		//load failed
-	}
-
-	FIBITMAP* image32Bit3 = FreeImage_ConvertTo32Bits(image3);
-
-	FreeImage_Unload(image3);
-
-	unsigned int texID3;
-	glGenTextures(1, &texID3);
-	glBindTexture(GL_TEXTURE_2D, texID3);
-
-	//upload texture bytes
-	glTexImage2D(
-		GL_TEXTURE_2D,
-		0,
-		GL_SRGB_ALPHA,
-		FreeImage_GetWidth(image32Bit3),
-		FreeImage_GetHeight(image32Bit3),
-		0,
-		GL_BGRA,
-		GL_UNSIGNED_BYTE,
-		(void*)FreeImage_GetBits(image32Bit3));
-
-	//set min filter to linear
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	FreeImage_Unload(image32Bit3);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
+	objs[3].textureFile = "player.png";
+	objs[3].transform.loc = glm::vec3(0, -.5, 0); //center of screen
+	objs[3].transform.rot = glm::vec3(0, 0, 0);
+	objs[3].transform.size = glm::vec3(.20, .30, 1); //width, height, depth
 
 	//set the click function when loading the game
 	glfwSetMouseButtonCallback(GLFWwindowPtr, mouseClick);
@@ -259,46 +211,70 @@ bool Engine::gameLoop()
 	//game loop until the user closes the window
 	while (!glfwWindowShouldClose(GLFWwindowPtr))
 	{
+		
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		objs[0].transform.world = translate(objs[0].transform.loc)* scale(objs[0].transform.size) * glm::yawPitchRoll(objs[0].transform.rot.y, objs[0].transform.rot.x, objs[0].transform.rot.z);
+		objs[1].transform.world = translate(objs[1].transform.loc)* scale(objs[1].transform.size) * glm::yawPitchRoll(objs[1].transform.rot.y, objs[1].transform.rot.x, objs[1].transform.rot.z);
+		objs[2].transform.world = translate(objs[2].transform.loc)* scale(objs[2].transform.size) * glm::yawPitchRoll(objs[2].transform.rot.y, objs[2].transform.rot.x, objs[2].transform.rot.z);
+		objs[3].transform.world = translate(objs[3].transform.loc)* scale(objs[3].transform.size) * glm::yawPitchRoll(objs[3].transform.rot.y, objs[3].transform.rot.x, objs[3].transform.rot.z);
+
+		glUniformMatrix4fv(2, 1, false, &objs[0].transform.world[0][0]);
+
 		//render game objects
-		glBindVertexArray(vertArr);
+		glBindTexture(GL_TEXTURE_2D, redFruit.texID);
+		//glBindVertexArray(vertArr);
 		glDrawArrays(GL_TRIANGLES, 0, vertCount);
 		
-		if (keyIsDown[GLFW_MOUSE_BUTTON_1] && keyWasDown[GLFW_MOUSE_BUTTON_1] == false)
-		{
-			if (i1)
-			{
-				i1 = false;
-				i2 = true;
-				i3 = false;
-			}
-			else if (i2)
-			{
-				i1 = false;
-				i2 = false;
-				i3 = true;
-			}
-			else if (i3)
-			{
-				i1 = true;
-				i2 = false;
-				i3 = false;
-			}
-		}
-		
-		if (i1) 
-		{
-			glBindTexture(GL_TEXTURE_2D, texID); // LEFT OFFF HERE
-		}
-		else if (i2) 
-		{
-			glBindTexture(GL_TEXTURE_2D, texID2); // LEFT OFFF HERE
-		}
-		else if (i3)
-		{
-			glBindTexture(GL_TEXTURE_2D, texID3); // LEFT OFFF HERE
-		}
+		glUniformMatrix4fv(2, 1, false, &objs[1].transform.world[0][0]);
+		glBindTexture(GL_TEXTURE_2D, blueFruit.texID);
+		glBindVertexArray(vertArr);
+		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+
+		glUniformMatrix4fv(2, 1, false, &objs[2].transform.world[0][0]);
+		glBindTexture(GL_TEXTURE_2D, yellowFruit.texID);
+		glBindVertexArray(vertArr);
+		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+
+		glUniformMatrix4fv(2, 1, false, &objs[3].transform.world[0][0]);
+		glBindTexture(GL_TEXTURE_2D, player.texID);
+		glBindVertexArray(vertArr);
+		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+		//glBindTexture(GL_TEXTURE_2D, player.texID);
+		//if (keyIsDown[GLFW_MOUSE_BUTTON_1] && keyWasDown[GLFW_MOUSE_BUTTON_1] == false)
+		//{
+		//	if (i1)
+		//	{
+		//		i1 = false;
+		//		i2 = true;
+		//		i3 = false;
+		//	}
+		//	else if (i2)
+		//	{
+		//		i1 = false;
+		//		i2 = false;
+		//		i3 = true;
+		//	}
+		//	else if (i3)
+		//	{
+		//		i1 = true;
+		//		i2 = false;
+		//		i3 = false;
+		//	}
+		//}
+
+		//if (i1)
+		//{
+		//	glBindTexture(GL_TEXTURE_2D, redFruit.texID); // LEFT OFFF HERE
+		//}
+		//else if (i2)
+		//{
+		//	glBindTexture(GL_TEXTURE_2D, paint.texID); // LEFT OFFF HERE
+		//}
+		//else if (i3)
+		//{
+		//	glBindTexture(GL_TEXTURE_2D, paperBlue.texID); // LEFT OFFF HERE
+		//}
 
 		//Swap the front (what the screen displays) and back (what OpenGL draws to) buffers.
 		glfwSwapBuffers(GLFWwindowPtr);
@@ -315,8 +291,6 @@ bool Engine::gameLoop()
 		}
 	}
 
-	glDeleteTextures(1, &texID);
-	glDeleteTextures(1, &texID2);
 	glfwTerminate();
 	return true;
 }
