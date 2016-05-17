@@ -30,14 +30,25 @@ struct Transform {
 	glm::mat4 world; // object-world transform matrix
 };
 
+struct RigidBody {
+	glm::vec3 velocity;
+	glm::vec3 force;
+	float mass;
+};
+
 struct Object {
 	Transform transform;
+	RigidBody rigidBody{ glm::vec3(0,0,0), glm::vec3(0,0,0), 1.0f };
 	std::string  textureFile;
 };
 
 
+
+
 Engine::Engine()
 {
+	deltaTime = 0.0f;
+	previousFrameTime = 0.0f;
 }
 
 
@@ -75,6 +86,8 @@ bool Engine::init()
 	//Some Graphic Techniques wont work with this on
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	currentTime = glfwGetTime();
 	return true;
 }
 
@@ -169,12 +182,15 @@ bool Engine::gameLoop()
 	Texture blueFruit = Texture("blueFruit.png");
 	Texture yellowFruit = Texture("yellowFruit.png");
 	Texture player = Texture("player.png");
-	
+	Texture forest = Texture("forest.jpg");
+
 	player.LoadTexture();
 	blueFruit.LoadTexture();
 	yellowFruit.LoadTexture();
+	forest.LoadTexture();
+
 	//object creation
-	Object * objs = new Object[4];
+	Object * objs = new Object[5];
 
 	objs[0].textureFile = "redFruit.png";
 	objs[0].transform.loc = glm::vec3(-.60, .30, 0); //center of screen
@@ -196,6 +212,11 @@ bool Engine::gameLoop()
 	objs[3].transform.rot = glm::vec3(0, 0, 0);
 	objs[3].transform.size = glm::vec3(.20, .30, 1); //width, height, depth
 
+	objs[4].textureFile = "forest.jpg";
+	objs[4].transform.loc = glm::vec3(0, 0, 0);
+	objs[4].transform.rot = glm::vec3(0, 0, 0);
+	objs[4].transform.size = vec3(1, 1, 0);
+
 	//set the click function when loading the game
 	glfwSetMouseButtonCallback(GLFWwindowPtr, mouseClick);
 
@@ -211,19 +232,117 @@ bool Engine::gameLoop()
 	//game loop until the user closes the window
 	while (!glfwWindowShouldClose(GLFWwindowPtr))
 	{
+		currentTime = glfwGetTime();
+		deltaTime = (currentTime - previousFrameTime);
+		previousFrameTime = currentTime;
+
+		//update object 1
+		//Velocity Change
+		//1. Calculate velocity
+		glm::vec3 vel = (glm::vec3(0, -.00005, 0) / deltaTime) + objs[0].rigidBody.velocity;
+		//2.Calculate Acceleration 
+		glm::vec3 acceleration = (vel - objs[0].rigidBody.velocity) / deltaTime;
+		//3. Calculate force
+		objs[0].rigidBody.force += objs[0].rigidBody.mass * acceleration;
+		// store new velocity
+		objs[0].rigidBody.velocity = vel;
+
+		//Location change
+		//glm::vec3 desiredPosition = objs[0].transform.loc * objs[0].rigidBody.force;
+		glm::vec3 deltaR = objs[0].rigidBody.velocity * deltaTime;
+		objs[0].transform.loc =  (deltaR+objs[0].transform.loc);
+		//objs[0].transform.loc.x = -0.6;
+		std::cout << objs[0].transform.loc.y << std::endl;
+
+		//update object 2
+		//Velocity Change
+		//1. Calculate velocity
+		glm::vec3 vel2 = (glm::vec3(0, -.00005, 0) / deltaTime) + objs[1].rigidBody.velocity;
+		//2.Calculate Acceleration 
+		glm::vec3 acceleration2 = (vel2 - objs[1].rigidBody.velocity) / deltaTime;
+		//3. Calculate force
+		objs[1].rigidBody.force += objs[1].rigidBody.mass * acceleration2;
+		// store new velocity
+		objs[1].rigidBody.velocity = vel2;
+
+		//Location change
+		//glm::vec3 desiredPosition = objs[0].transform.loc * objs[0].rigidBody.force;
+		glm::vec3 deltaR2 = objs[1].rigidBody.velocity * deltaTime;
+		objs[1].transform.loc = (deltaR2 + objs[1].transform.loc);
+		//objs[0].transform.loc.x = -0.6;
+		std::cout << objs[1].transform.loc.y << std::endl;
+
+		//update object 3
+		//Velocity Change
+		//1. Calculate velocity
+		glm::vec3 vel3 = (glm::vec3(0, -.00005, 0) / deltaTime) + objs[2].rigidBody.velocity;
+		//2.Calculate Acceleration 
+		glm::vec3 acceleration3 = (vel3 - objs[2].rigidBody.velocity) / deltaTime;
+		//3. Calculate force
+		objs[2].rigidBody.force += objs[2].rigidBody.mass * acceleration3;
+		// store new velocity
+		objs[2].rigidBody.velocity = vel3;
+
+		//Location change
+		//glm::vec3 desiredPosition = objs[0].transform.loc * objs[0].rigidBody.force;
+		glm::vec3 deltaR3 = objs[2].rigidBody.velocity * deltaTime;
+		objs[2].transform.loc = (deltaR3 + objs[2].transform.loc);
+		//objs[0].transform.loc.x = -0.6;
+		std::cout << objs[2].transform.loc.y << std::endl;
+
+		//update object 4
+		glm::vec3 vel4;
+		if (keyIsDown[GLFW_KEY_A] && keyWasDown[GLFW_KEY_A])
+		{
+			vel4 = (glm::vec3(-.0005, 0, 0) / deltaTime) + objs[3].rigidBody.velocity;
+		}
+		else if (keyIsDown[GLFW_KEY_D] && keyWasDown[GLFW_KEY_D])
+		{
+			vel4 = (glm::vec3(.0005, 0, 0) / deltaTime) + objs[3].rigidBody.velocity;
+		}
+		else
+		{
+			objs[3].rigidBody.velocity = glm::vec3(0,0,0);
+		}
+
 		
+		//Velocity Change
+		//1. Calculate velocity
+		
+		//2.Calculate Acceleration 
+		glm::vec3 acceleration4 = (vel4 - objs[3].rigidBody.velocity) / deltaTime;
+		//3. Calculate force
+		objs[3].rigidBody.force += objs[3].rigidBody.mass * acceleration4;
+		// store new velocity
+		objs[3].rigidBody.velocity = vel4;
+
+		//Location change
+		//glm::vec3 desiredPosition = objs[0].transform.loc * objs[0].rigidBody.force;
+		glm::vec3 deltaR4 = objs[3].rigidBody.velocity * deltaTime;
+		objs[3].transform.loc = (deltaR4 + objs[3].transform.loc);
+		//objs[0].transform.loc.x = -0.6;
+		std::cout << objs[3].transform.loc.y << std::endl;
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		objs[0].transform.world = translate(objs[0].transform.loc)* scale(objs[0].transform.size) * glm::yawPitchRoll(objs[0].transform.rot.y, objs[0].transform.rot.x, objs[0].transform.rot.z);
 		objs[1].transform.world = translate(objs[1].transform.loc)* scale(objs[1].transform.size) * glm::yawPitchRoll(objs[1].transform.rot.y, objs[1].transform.rot.x, objs[1].transform.rot.z);
 		objs[2].transform.world = translate(objs[2].transform.loc)* scale(objs[2].transform.size) * glm::yawPitchRoll(objs[2].transform.rot.y, objs[2].transform.rot.x, objs[2].transform.rot.z);
 		objs[3].transform.world = translate(objs[3].transform.loc)* scale(objs[3].transform.size) * glm::yawPitchRoll(objs[3].transform.rot.y, objs[3].transform.rot.x, objs[3].transform.rot.z);
+		objs[4].transform.world = translate(objs[4].transform.loc)* scale(objs[4].transform.size) * glm::yawPitchRoll(objs[4].transform.rot.y, objs[4].transform.rot.x, objs[4].transform.rot.z);
+
+
+		glUniformMatrix4fv(2, 1, false, &objs[4].transform.world[0][0]);
+		glBindTexture(GL_TEXTURE_2D, forest.texID);
+		glBindVertexArray(vertArr);
+		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+
+
 
 		glUniformMatrix4fv(2, 1, false, &objs[0].transform.world[0][0]);
 
 		//render game objects
 		glBindTexture(GL_TEXTURE_2D, redFruit.texID);
-		//glBindVertexArray(vertArr);
+		glBindVertexArray(vertArr);
 		glDrawArrays(GL_TRIANGLES, 0, vertCount);
 		
 		glUniformMatrix4fv(2, 1, false, &objs[1].transform.world[0][0]);
@@ -240,41 +359,9 @@ bool Engine::gameLoop()
 		glBindTexture(GL_TEXTURE_2D, player.texID);
 		glBindVertexArray(vertArr);
 		glDrawArrays(GL_TRIANGLES, 0, vertCount);
-		//glBindTexture(GL_TEXTURE_2D, player.texID);
-		//if (keyIsDown[GLFW_MOUSE_BUTTON_1] && keyWasDown[GLFW_MOUSE_BUTTON_1] == false)
-		//{
-		//	if (i1)
-		//	{
-		//		i1 = false;
-		//		i2 = true;
-		//		i3 = false;
-		//	}
-		//	else if (i2)
-		//	{
-		//		i1 = false;
-		//		i2 = false;
-		//		i3 = true;
-		//	}
-		//	else if (i3)
-		//	{
-		//		i1 = true;
-		//		i2 = false;
-		//		i3 = false;
-		//	}
-		//}
 
-		//if (i1)
-		//{
-		//	glBindTexture(GL_TEXTURE_2D, redFruit.texID); // LEFT OFFF HERE
-		//}
-		//else if (i2)
-		//{
-		//	glBindTexture(GL_TEXTURE_2D, paint.texID); // LEFT OFFF HERE
-		//}
-		//else if (i3)
-		//{
-		//	glBindTexture(GL_TEXTURE_2D, paperBlue.texID); // LEFT OFFF HERE
-		//}
+		
+		
 
 		//Swap the front (what the screen displays) and back (what OpenGL draws to) buffers.
 		glfwSwapBuffers(GLFWwindowPtr);
@@ -288,6 +375,22 @@ bool Engine::gameLoop()
 		if (keyIsDown[GLFW_KEY_ESCAPE] && keyWasDown[GLFW_KEY_ESCAPE] == false) 
 		{
 			glfwSetWindowShouldClose(GLFWwindowPtr, GL_TRUE);
+		}
+
+		if(objs[0].transform.loc.y < -1 )
+		{
+			objs[0].transform.loc.y = 0.5;
+			objs[0].rigidBody.velocity = glm::vec3(0,0,0);
+		}
+		if (objs[1].transform.loc.y < -1)
+		{
+			objs[1].transform.loc.y = 0.5;
+			objs[1].rigidBody.velocity = glm::vec3(0, 0, 0);
+		}
+		if (objs[2].transform.loc.y < -1)
+		{
+			objs[2].transform.loc.y = 0.5;
+			objs[2].rigidBody.velocity = glm::vec3(0, 0, 0);
 		}
 	}
 

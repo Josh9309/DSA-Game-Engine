@@ -10,6 +10,12 @@
 #include <vector>
 #include <map>
 
+using glm::vec3;
+using glm::mat4;
+using std::cout;
+using std::cin;
+using std::endl;
+
 #pragma once
 class Engine
 {
@@ -27,5 +33,8 @@ private:
 	GLuint vertBuf;
 	unsigned int vertCount;
 	ShaderManager shademanage;
+	GLfloat deltaTime;
+	GLfloat currentTime;
+	GLfloat previousFrameTime;
 };
 

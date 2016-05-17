@@ -1,11 +1,13 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (DemoWindow.vcxproj, ShadersHW.vcxproj, TextureHW.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (DemoWindow.vcxproj, PositioningHW.vcxproj, ShadersHW.vcxproj, TextureHW.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Texture.cpp
   ShaderManager.cpp
   main.cpp
   Engine.cpp
 \\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(12): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
 \\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(17): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(177): warning C4316: 'Object': object allocated on the heap may not be aligned 16
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(90): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(193): warning C4316: 'Object': object allocated on the heap may not be aligned 16
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(235): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
   Generating Code...
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  DemoWindow.vcxproj -> \\banner.main.ad.rit.edu\students\jxm3392\IGMProfile\Desktop\GitHub\DSA-Game-Engine\DSA1 Final Game\Debug\PositioningHW.exe
+  DemoWindow.vcxproj -> \\banner.main.ad.rit.edu\students\jxm3392\IGMProfile\Desktop\GitHub\DSA-Game-Engine\DSA1 Final Game\Debug\MovingObjectsHW.exe
