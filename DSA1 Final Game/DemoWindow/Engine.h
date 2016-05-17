@@ -4,6 +4,8 @@
 #include <glm/gtx/transform.hpp>
 #include <FreeImage.h>
 #include "ShaderManager.h"
+#include "Camera.h"
+#include "GameObject.h"
 
 #include <string>
 #include <iostream>
@@ -37,5 +39,7 @@ private:
 	GLfloat deltaTime;
 	GLfloat currentTime;
 	GLfloat previousFrameTime;
+	Camera* camera;
+	bool FPSEnable;
 };
 

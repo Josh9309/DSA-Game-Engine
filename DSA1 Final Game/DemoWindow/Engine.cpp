@@ -4,6 +4,10 @@
 #include <glm/gtx/euler_angles.hpp>
 #include "GameObject.h"
 
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 namespace {
 	std::map<int, bool> keyIsDown;
 	std::map<int, bool> keyWasDown;
@@ -50,6 +54,7 @@ Engine::Engine()
 {
 	deltaTime = 0.0f;
 	previousFrameTime = 0.0f;
+	FPSEnable = false;
 }
 
 
@@ -188,15 +193,18 @@ bool Engine::gameLoop()
 	yellowFruit.LoadTexture();
 	forest.LoadTexture();*/
 
+	//camera creation
+	camera = new Camera();
+
 	//object creation
 	GameObject * objs = new GameObject[5];
 
 	objs[0] = GameObject(redFruit, vec3(-.60, .30, 0), vec3(0, 0, 0), vec3(.1, .1, 1), axis_Aligned_Bounding_Box);
-	objs[1] = GameObject(blueFruit, vec3(.6, .6, 0), vec3(0, 0, 0), vec3(.10, .10, 1), sphere);
+	objs[1] = GameObject(blueFruit, vec3(.6, .6, 0), vec3(0, 0, 0), vec3(.10, .10, 1), axis_Aligned_Bounding_Box);
 
-	objs[2] = GameObject(yellowFruit, vec3(0, .5, 0), vec3(0, 0, 0), vec3(.10, .10, 1), sphere);
+	objs[2] = GameObject(yellowFruit, vec3(0, .5, 0), vec3(0, 0, 0), vec3(.10, .10, 1), axis_Aligned_Bounding_Box);
 
-	objs[3] = GameObject(player, vec3(0, -.5, 0), vec3(0, 0, 0), vec3(.20, .30, 1), sphere);
+	objs[3] = GameObject(player, vec3(0, -.5, 0), vec3(0, 0, 0), vec3(.20, .30, 1), axis_Aligned_Bounding_Box);
 
 	objs[4] = GameObject(forest, vec3(0, 0, 0), vec3(0, 0, 0), vec3(1, 1, 1), colliderless);
 
@@ -220,9 +228,7 @@ bool Engine::gameLoop()
 	//clear canvas
 	glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 
-	bool i1 = true; //display image 1 bool
-	bool i2 = false; //display image 2 bool
-	bool i3 = false;
+	
 	//game loop until the user closes the window
 	while (!glfwWindowShouldClose(GLFWwindowPtr))
 	{
@@ -230,20 +236,20 @@ bool Engine::gameLoop()
 		deltaTime = (currentTime - previousFrameTime);
 		previousFrameTime = currentTime;
 
-		objs[0].addForce(vec3(0, -.00005, 0), deltaTime);
-		objs[1].addForce(vec3(0, -.00005, 0), deltaTime);
-		objs[2].addForce(vec3(0, -.00005, 0), deltaTime);
+		objs[0].addForce(vec3(0, -.5, 0), deltaTime);
+		objs[1].addForce(vec3(0, -.5, 0), deltaTime);
+		objs[2].addForce(vec3(0, -.5, 0), deltaTime);
 		
 
 		//update object 4
 		glm::vec3 vel4;
 		if ((keyIsDown[GLFW_KEY_A] && keyWasDown[GLFW_KEY_A]) || (keyIsDown[GLFW_KEY_LEFT] && keyWasDown[GLFW_KEY_LEFT]))
 		{
-			vel4 = glm::vec3(-.0005, 0, 0);
+			vel4 = glm::vec3(-2.5, 0, 0);
 		}
 		else if ((keyIsDown[GLFW_KEY_D] && keyWasDown[GLFW_KEY_D]) || (keyIsDown[GLFW_KEY_RIGHT] && keyWasDown[GLFW_KEY_RIGHT]))
 		{
-			vel4 = glm::vec3(.0005, 0, 0);
+			vel4 = glm::vec3(2.5, 0, 0);
 		}
 		else
 		{
@@ -251,7 +257,7 @@ bool Engine::gameLoop()
 		}
 
 		objs[3].addForce(vel4, deltaTime);
-		cout << objs[3].transform.loc.x << ", " << objs[3].transform.loc.y << ", " << objs[3].transform.loc.z << endl;
+		cout << objs[1].transform.loc.x << ", " << objs[1].transform.loc.y << ", " << objs[1].transform.loc.z << endl;
 
 		if(objs[3].collidesWith(objs[0]))
 		{
@@ -277,11 +283,99 @@ bool Engine::gameLoop()
 
 		glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
-		objs[0].transform.world = translate(objs[0].transform.loc)* scale(objs[0].transform.size) * glm::yawPitchRoll(objs[0].transform.rot.y, objs[0].transform.rot.x, objs[0].transform.rot.z);
-		objs[1].transform.world = translate(objs[1].transform.loc)* scale(objs[1].transform.size) * glm::yawPitchRoll(objs[1].transform.rot.y, objs[1].transform.rot.x, objs[1].transform.rot.z);
-		objs[2].transform.world = translate(objs[2].transform.loc)* scale(objs[2].transform.size) * glm::yawPitchRoll(objs[2].transform.rot.y, objs[2].transform.rot.x, objs[2].transform.rot.z);
-		objs[3].transform.world = translate(objs[3].transform.loc)* scale(objs[3].transform.size) * glm::yawPitchRoll(objs[3].transform.rot.y, objs[3].transform.rot.x, objs[3].transform.rot.z);
-		objs[4].transform.world = translate(objs[4].transform.loc)* scale(objs[4].transform.size) * glm::yawPitchRoll(objs[4].transform.rot.y, objs[4].transform.rot.x, objs[4].transform.rot.z);
+		////Projection Camera Matrix Stuff
+
+		////View Matrix
+		//vec3 camLoc = { 0,0,2 };
+		//vec3 camRot = { 0,0,0 };
+
+		//glm::mat3 rotMat = (glm::mat3)glm::yawPitchRoll(camRot.y, camRot.x, camRot.z);
+
+		//vec3 eye = camLoc;
+		//vec3 center = eye + rotMat * vec3(0, 0, -1);
+		//vec3 up = rotMat * vec3(0, 1, 0);
+
+		//mat4 lookAtMat = glm::lookAt(eye, center, up);
+
+		////perspective projection matrix
+		//float zoom = 1.0f;
+		//int width = 800;
+		//int height = 600;
+
+		//float fovy = 3.14159f * .4f / zoom;
+		//float aspect = (float)width / (float)height;
+		//float zNear = .01f;
+		//float zFar = 1000.f;
+
+		//mat4 perspectiveMat = glm::perspective(fovy, aspect, zNear, zFar);
+
+		///*mat4 cameraMat =
+		//{
+		//	1,0,0,0,
+		//	0,1,0,0,
+		//	0,0,1,0,
+		//	0,0,0,1
+		//};*/
+
+		//mat4 cameraMat = perspectiveMat * lookAtMat;
+
+		//glUniformMatrix4fv(3, 1, false, &cameraMat[0][0]); //sends cameraMat to vertex shader
+		///////////////////////////////////////////////////////////////
+
+		if (FPSEnable)
+		{
+			float sens = .005;
+			int w = 800, h = 600;
+			double x, y;
+			glfwGetCursorPos(GLFWwindowPtr, &x, &y);
+
+			camera->transform.rot.y -= sens*(x - w*.5f); //yaw
+			camera->transform.rot.x -= sens*(y - h*.5f); //Pitch
+			camera->transform.rot.x = glm::clamp(camera->transform.rot.x, -.5f * (float)M_PI, .5f*(float)M_PI);
+			glfwSetCursorPos(GLFWwindowPtr, w * .5f, h * .5f);
+
+			vec3 camVel;
+			glm::mat3 R = (glm::mat3)glm::yawPitchRoll(camera->transform.rot.y, camera->transform.rot.x, camera->transform.rot.z);
+
+			if (keyIsDown[GLFW_KEY_H] && keyWasDown[GLFW_KEY_H])
+			{
+				camVel += R * vec3(-.5, 0, 0);
+			}
+			else if (keyIsDown[GLFW_KEY_K] && keyWasDown[GLFW_KEY_K])
+			{
+				camVel += R * vec3(.5, 0, 0);
+			}
+			else if (keyIsDown[GLFW_KEY_U] && keyWasDown[GLFW_KEY_U])
+			{
+				camVel += R * vec3(0, 0, -.5);
+			}
+			else if (keyIsDown[GLFW_KEY_J] && keyWasDown[GLFW_KEY_J])
+			{
+				camVel += R * vec3(0, 0, .5);
+			}
+			else 
+			{
+				camera->rigidBody.velocity = vec3(0,0,0);
+			}
+
+			float speed = 1.f;
+			if(camVel != vec3())
+			{
+				camVel = glm::normalize(camVel) * speed;
+			}
+
+			camera->Update(camVel, deltaTime);
+		}
+		else
+		{
+			camera->Update(vec3(0, 0, 0), deltaTime);
+		}
+
+		objs[0].transform.world = translate(objs[0].transform.loc)* glm::yawPitchRoll(objs[0].transform.rot.y, objs[0].transform.rot.x, objs[0].transform.rot.z) * scale(objs[0].transform.size);
+		objs[1].transform.world = translate(objs[1].transform.loc)* glm::yawPitchRoll(objs[1].transform.rot.y, objs[1].transform.rot.x, objs[1].transform.rot.z) * scale(objs[1].transform.size);
+		objs[2].transform.world = translate(objs[2].transform.loc)* glm::yawPitchRoll(objs[2].transform.rot.y, objs[2].transform.rot.x, objs[2].transform.rot.z) * scale(objs[2].transform.size);
+		objs[3].transform.world = translate(objs[3].transform.loc)* glm::yawPitchRoll(objs[3].transform.rot.y, objs[3].transform.rot.x, objs[3].transform.rot.z) * scale(objs[3].transform.size);
+		objs[4].transform.world = translate(objs[4].transform.loc)* glm::yawPitchRoll(objs[4].transform.rot.y, objs[4].transform.rot.x, objs[4].transform.rot.z) * scale(objs[4].transform.size);
 
 
 		glUniformMatrix4fv(2, 1, false, &objs[4].transform.world[0][0]);
@@ -329,7 +423,17 @@ bool Engine::gameLoop()
 		{
 			glfwSetWindowShouldClose(GLFWwindowPtr, GL_TRUE);
 		}
-
+		if (keyIsDown[GLFW_KEY_F] && keyWasDown[GLFW_KEY_F] == false)
+		{
+			if(FPSEnable)
+			{
+				FPSEnable = false;
+			}
+			else
+			{
+				FPSEnable = true;
+			}
+		}
 		if(objs[0].transform.loc.y < -1 )
 		{
 			objs[0].transform.loc.y = 0.5;

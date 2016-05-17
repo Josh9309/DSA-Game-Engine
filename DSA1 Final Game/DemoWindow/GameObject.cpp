@@ -26,22 +26,30 @@ GameObject::GameObject(Texture text, vec3 loc, vec3 rot, vec3 siz, Colliders col
 	transform.rot = rot;
 	transform.size = siz;
 	colliderType = collide;
+	rigidBody.mass = 1.0f;
 }
 
 void GameObject::addForce(vec3 addedForce, float deltaTime)
 {
-	//calculate velocity
-	vec3 vel = (addedForce / deltaTime) + rigidBody.velocity;
-	//calculate acceleration
-	vec3 acceleration = (vel - rigidBody.velocity) / deltaTime;
-	//calculate force 
-	rigidBody.force += rigidBody.mass * acceleration;
-	//store new velocity
-	rigidBody.velocity = vel;
+	////calculate velocity
+	//vec3 vel = (addedForce / deltaTime) + rigidBody.velocity;
+	////calculate acceleration
+	//vec3 acceleration = (vel - rigidBody.velocity) / deltaTime;
+	////calculate force 
+	//rigidBody.force += rigidBody.mass * acceleration;
+	////store new velocity
+	//rigidBody.velocity = vel;
 
-	//location change
-	vec3 deltaR = rigidBody.velocity * deltaTime;
-	transform.loc = (deltaR + transform.loc);
+	////location change
+	//vec3 deltaR = rigidBody.velocity * deltaTime;
+	//transform.loc = (deltaR + transform.loc);
+
+	
+	rigidBody.force = addedForce;
+	rigidBody.velocity += (rigidBody.force/rigidBody.mass) *deltaTime;
+	rigidBody.force = vec3();
+	transform.loc += rigidBody.velocity *deltaTime;
+	
 }
 
 void GameObject::resetVelocity()
@@ -102,49 +110,51 @@ bool GameObject::collidesWith(GameObject & object2)
 	//this is AABB and object 2 is Sphere
 	if(colliderType == axis_Aligned_Bounding_Box && object2.colliderType == sphere )
 	{
-		float dist =0.0f; //distance^2
+		float dist = 0.0f; //distance^2
 
-		if(object2.transform.loc.x < transform.loc.x)
+		if (object2.transform.loc.x < transform.loc.x)
 		{
 			//if sphere center is left of box
-			dist += pow(((transform.loc.x - transform.size.x) - object2.transform.loc.x),2); //good
+			dist += pow(((transform.loc.x - transform.size.x) - object2.transform.loc.x), 2);
 		}
-		else if(object2.transform.loc.x > transform.loc.x)
+		if (object2.transform.loc.x > transform.loc.x)
 		{
 			//if sphere center is right of box
-			dist += pow((object2.transform.loc.x - (transform.loc.x + transform.size.x)), 2);//good
+			dist += pow((object2.transform.loc.x - (transform.loc.x + transform.size.x)), 2);
 		}
 		else
 		{
 		}
 
 		//sphere is above the top of box
-		if(object2.transform.loc.y < transform.loc.y)
+		if (object2.transform.loc.y > transform.loc.y)
 		{
 			dist += pow((object2.transform.loc.y - (transform.loc.y + transform.size.y)), 2);
 		}
 		//sphere is bellow bottom box
-		if(object2.transform.loc.y > transform.loc.y)
+		if (object2.transform.loc.y < transform.loc.y)
 		{
 			dist += pow(((transform.loc.y - transform.size.y) - object2.transform.loc.y), 2);
 		}
 		else
-		{}
+		{
+		}
 
 		//sphere is in front of box
-		if(object2.transform.loc.z > transform.loc.z)
+		if (object2.transform.loc.z > transform.loc.z)
 		{
 			dist += pow((object2.transform.loc.z - (transform.loc.z + transform.size.z)), 2);
 		}
 		//sphere is behind box
-		if(object2.transform.loc.z < transform.loc.z)
+		if (object2.transform.loc.z < transform.loc.z)
 		{
 			dist += pow(((transform.loc.z - transform.size.z) - object2.transform.loc.z), 2);
 		}
-		else 
-		{}
+		else
+		{
+		}
 
-		if(dist < pow(object2.transform.size.x, 2))
+		if (dist <= pow(object2.transform.size.x, 2))
 		{
 			return true;
 		}
