@@ -26,6 +26,7 @@ public:
 	bool bufferModel();
 	bool gameLoop();
 	bool useShaders();
+	bool collides();
 	
 private:
 	GLFWwindow* GLFWwindowPtr;
