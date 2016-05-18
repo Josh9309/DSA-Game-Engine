@@ -178,6 +178,16 @@ bool Model::Buffer()
 		GL_FALSE, //should we normalize the data
 		sizeof(Vertex), // stride (bytes per vertex)
 		(void*)sizeof(glm::vec3)); // offset to this attribute
+
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(
+		2,
+		3,
+		GL_FLOAT,
+		GL_FALSE,
+		sizeof(Vertex),
+		(void*)(sizeof(glm::vec3) + sizeof(glm::vec2)));
+
 	return true;
 }
 

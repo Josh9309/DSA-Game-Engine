@@ -330,29 +330,31 @@ bool Engine::gameLoop()
 		objs[4].transform.world = translate(objs[4].transform.loc)* glm::yawPitchRoll(objs[4].transform.rot.y, objs[4].transform.rot.x, objs[4].transform.rot.z) * scale(objs[4].transform.size);
 
 
-		glUniformMatrix4fv(2, 1, false, &objs[4].transform.world[0][0]);
+		glUniformMatrix4fv(3, 1, false, &objs[4].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[4].texture.texID);
 		gameModels[3].render();
 
 		////render game objects
-		glUniformMatrix4fv(2, 1, false, &objs[0].transform.world[0][0]);
+		glUniformMatrix4fv(3, 1, false, &objs[0].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[0].texture.texID);
 		gameModels[2].render();
 		//
-		glUniformMatrix4fv(2, 1, false, &objs[1].transform.world[0][0]);
+		glUniformMatrix4fv(3, 1, false, &objs[1].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[1].texture.texID);
 		gameModels[2].render();
 
-		glUniformMatrix4fv(2, 1, false, &objs[2].transform.world[0][0]);
+		glUniformMatrix4fv(3, 1, false, &objs[2].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[2].texture.texID);
 		gameModels[2].render();
 
-		glUniformMatrix4fv(2, 1, false, &objs[3].transform.world[0][0]);
+		glUniformMatrix4fv(3, 1, false, &objs[3].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[3].texture.texID);
 		gameModels[4].render();
 
 		//gameModel.render();
-		
+		vec3 lightLoc = vec3(0, 8, -5);
+		glUniform3f(5, lightLoc.x, lightLoc.y, lightLoc.z);
+		glUniform3f(6, camera->transform.loc.x, camera->transform.loc.y, camera->transform.loc.z);
 
 		//Swap the front (what the screen displays) and back (what OpenGL draws to) buffers.
 		glfwSwapBuffers(GLFWwindowPtr);

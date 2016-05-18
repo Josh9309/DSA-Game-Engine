@@ -21,9 +21,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A9D12B6C-1C86-4C30-BDBD-66AD7C11FFDE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>ModelHW</RootNamespace>
+    <RootNamespace>LightingHW</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>ModelHW</ProjectName>
+    <ProjectName>LightingHW</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -168,6 +168,10 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Texture.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fShader.glsl" />
+    <None Include="shaders\vShader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -30,7 +30,7 @@ Camera::Camera()
 
 	cameraMatrix = perspectiveMat * lookAtMat;
 
-	glUniformMatrix4fv(3, 1, false, &cameraMatrix[0][0]); //sends cameraMat to vertex shader
+	glUniformMatrix4fv(4, 1, false, &cameraMatrix[0][0]); //sends cameraMat to vertex shader
 }
 
 
@@ -59,5 +59,5 @@ void Camera::Update(vec3 addedForce, float deltaTime)
 
 	cameraMatrix = perspectiveMat * lookAtMat;
 
-	glUniformMatrix4fv( 3, 1, false, &cameraMatrix[0][0]); //sends cameraMat to vertex shader
+	glUniformMatrix4fv( 4, 1, false, &cameraMatrix[0][0]); //sends cameraMat to vertex shader
 }

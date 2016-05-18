@@ -1,18 +1,26 @@
-﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (CameraHW.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(392,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (CameraHW.vcxproj, CollisionHW.vcxproj, DemoWindow.vcxproj, ModelHW.vcxproj, MovingObjectsHW.vcxproj, PositioningHW.vcxproj, ShadersHW.vcxproj, TextureHW.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Texture.cpp
+  ShaderManager.cpp
+  Model.cpp
+  main.cpp
+  GameObject.cpp
   Engine.cpp
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(17): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(22): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(93): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(147): warning C4316: 'Camera': object allocated on the heap may not be aligned 16
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(150): warning C4316: 'GameObject': object allocated on the heap may not be aligned 16
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(187): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(217): warning C4305: '=': truncation from 'double' to 'float'
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(224): warning C4305: '=': truncation from 'double' to 'float'
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(231): warning C4305: '=': truncation from 'double' to 'float'
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(279): warning C4305: 'initializing': truncation from 'double' to 'float'
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(284): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(285): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(383): warning C4305: '=': truncation from 'double' to 'float'
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(388): warning C4305: '=': truncation from 'double' to 'float'
-\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\documents\igme-209\modelhw\demowindow\engine.cpp(393): warning C4305: '=': truncation from 'double' to 'float'
-  DemoWindow.vcxproj -> \\banner.main.ad.rit.edu\students\jxm3392\IGMProfile\Documents\IGME-209\ModelHW\Debug\ModelHW.exe
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(17): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(22): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(93): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(147): warning C4316: 'Camera': object allocated on the heap may not be aligned 16
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(150): warning C4316: 'GameObject': object allocated on the heap may not be aligned 16
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(187): warning C4244: '=': conversion from 'double' to 'GLfloat', possible loss of data
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(217): warning C4305: '=': truncation from 'double' to 'float'
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(224): warning C4305: '=': truncation from 'double' to 'float'
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(231): warning C4305: '=': truncation from 'double' to 'float'
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(279): warning C4305: 'initializing': truncation from 'double' to 'float'
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(284): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(285): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(385): warning C4305: '=': truncation from 'double' to 'float'
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(390): warning C4305: '=': truncation from 'double' to 'float'
+\\banner.main.ad.rit.edu\students\jxm3392\igmprofile\desktop\github\dsa-game-engine\dsa1 final game\demowindow\engine.cpp(395): warning C4305: '=': truncation from 'double' to 'float'
+  Camera.cpp
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  DemoWindow.vcxproj -> \\banner.main.ad.rit.edu\students\jxm3392\IGMProfile\Desktop\GitHub\DSA-Game-Engine\DSA1 Final Game\Debug\LightingHW.exe
