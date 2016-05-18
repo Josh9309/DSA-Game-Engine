@@ -41,6 +41,8 @@ private:
 	GLfloat previousFrameTime;
 	Camera* camera;
 	Model* gameModels = new Model[5];
+
+	bool gameStart;
 	bool FPSEnable;
 };
 

@@ -21,9 +21,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A9D12B6C-1C86-4C30-BDBD-66AD7C11FFDE}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>LightingHW</RootNamespace>
+    <RootNamespace>DSAGame</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>LightingHW</ProjectName>
+    <ProjectName>DSAGame</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

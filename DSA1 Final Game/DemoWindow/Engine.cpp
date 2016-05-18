@@ -24,27 +24,6 @@ namespace {
 }
 
 
-/*struct Transform {
-	glm::vec3 loc;
-	glm::vec3 rot;
-	glm::vec3 size;
-	glm::mat4 world; // object-world transform matrix
-};
-
-struct RigidBody {
-	glm::vec3 velocity;
-	glm::vec3 force;
-	float mass;
-};
-
-struct Object {
-	Transform transform;
-	RigidBody rigidBody{ glm::vec3(0,0,0), glm::vec3(0,0,0), 1.0f };
-	std::string  textureFile;
-};*/
-
-
-
 
 Engine::Engine()
 {
@@ -120,34 +99,21 @@ bool Engine::bufferModels()
 bool Engine::gameLoop()
 {
 
-	Texture paint = Texture("paintTexture.jpg");
-	paint.LoadTexture();
-
-	//This sets up second texture
-	Texture paperBlue = Texture("paper-blue.jpg");
-	paperBlue.LoadTexture();
-
-	Texture redFruit = Texture("redFruit.png");
-	Texture blueFruit = Texture("blueFruit.png");
-	Texture yellowFruit = Texture("yellowFruit.png");
 	Texture blue3DFruit = Texture("BlueFruitTextureMap.tga");
 	Texture red3DFruit = Texture("RedFruitTextureMap.tga");
 	Texture yellow3DFruit = Texture("YellowFruitTextureMap.tga");
 	Texture player = Texture("GooglyTextureMap.tga");
 	Texture forest = Texture("forest.jpg");
-
-	/*player.LoadTexture();
-	blueFruit.LoadTexture();
-	yellowFruit.LoadTexture();
-	forest.LoadTexture();*/
-
-	//blue3DFruit.LoadTexture();
+	Texture purple3DFruit("PurpleFruitTextureMap.tga");
+	Texture green3DFruit("GreenFruitTextureMap.tga");
+	Texture title("GameTitle.png");
+	Texture start("startGame.png");
 
 	//camera creation
 	camera = new Camera();
 
 	//object creation
-	GameObject * objs = new GameObject[5];
+	GameObject * objs = new GameObject[9];
 
 	objs[0] = GameObject(red3DFruit, vec3(-.60, .50, 0), vec3(0, 0, 0), vec3(.1, .1, .1), axis_Aligned_Bounding_Box);
 	objs[1] = GameObject(blue3DFruit, vec3(.6, .8, 0), vec3(0, 0, 0), vec3(.1, .1, .1), axis_Aligned_Bounding_Box);
@@ -158,18 +124,15 @@ bool Engine::gameLoop()
 
 	objs[4] = GameObject(forest, vec3(0, 0, -1), vec3(0, 0, 0), vec3(3, 2.5, .1), colliderless);
 
-	for (int i = 0; i < 5; i++)
+	objs[5] = GameObject(purple3DFruit, vec3(-1, 1.5, 0), vec3(0, 0, 0), vec3(.1, .1, .1), axis_Aligned_Bounding_Box);
+	objs[6] = GameObject(green3DFruit, vec3(1, 1.3, 0), vec3(0, 0, 0), vec3(.1, .1, .1), axis_Aligned_Bounding_Box);
+	objs[7] = GameObject(title, vec3(0, .7, -.9), vec3(0, 0, 0), vec3(1.5, .8, .1), colliderless);
+	objs[8] = GameObject(start, vec3(0, -1, -.9), vec3(0, 0, 0), vec3(1.5, .8, .1), colliderless);
+
+	for (int i = 0; i < 9; i++)
 	{
 		objs[i].texture.LoadTexture();
 	}
-
-	
-
-	/*redFruit.LoadTexture();
-	player.LoadTexture();
-	blueFruit.LoadTexture();
-	yellowFruit.LoadTexture();
-	forest.LoadTexture();*/
 
 	//set the click function when loading the game
 	glfwSetMouseButtonCallback(GLFWwindowPtr, mouseClick);
@@ -180,6 +143,8 @@ bool Engine::gameLoop()
 	//clear canvas
 	//glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 
+	gameStart = false;
+
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//game loop until the user closes the window
 	while (!glfwWindowShouldClose(GLFWwindowPtr))
@@ -188,91 +153,71 @@ bool Engine::gameLoop()
 		deltaTime = (currentTime - previousFrameTime);
 		previousFrameTime = currentTime;
 
-		objs[0].addForce(vec3(0, -.5, 0), deltaTime);
-		objs[1].addForce(vec3(0, -.5, 0), deltaTime);
-		objs[2].addForce(vec3(0, -.5, 0), deltaTime);
-		
-
-		//update object 4
-		glm::vec3 vel4;
-		if ((keyIsDown[GLFW_KEY_A] && keyWasDown[GLFW_KEY_A]) || (keyIsDown[GLFW_KEY_LEFT] && keyWasDown[GLFW_KEY_LEFT]))
+		if (gameStart == true)
 		{
-			vel4 = glm::vec3(-2.5, 0, 0);
-		}
-		else if ((keyIsDown[GLFW_KEY_D] && keyWasDown[GLFW_KEY_D]) || (keyIsDown[GLFW_KEY_RIGHT] && keyWasDown[GLFW_KEY_RIGHT]))
-		{
-			vel4 = glm::vec3(2.5, 0, 0);
-		}
-		else
-		{
-			objs[3].rigidBody.velocity = glm::vec3(0,0,0);
-		}
+			objs[0].addForce(vec3(0, -.5, 0), deltaTime);
+			objs[1].addForce(vec3(0, -.5, 0), deltaTime);
+			objs[2].addForce(vec3(0, -.5, 0), deltaTime);
+			objs[5].addForce(vec3(0, -.5, 0), deltaTime);
+			objs[6].addForce(vec3(0, -.5, 0), deltaTime);
 
-		objs[3].addForce(vel4, deltaTime);
-		cout << objs[3].transform.loc.x << ", " << objs[3].transform.loc.y << ", " << objs[3].transform.loc.z << endl;
+			//update object 4
+			glm::vec3 vel4;
+			if ((keyIsDown[GLFW_KEY_A] && keyWasDown[GLFW_KEY_A]) || (keyIsDown[GLFW_KEY_LEFT] && keyWasDown[GLFW_KEY_LEFT]))
+			{
+				vel4 = glm::vec3(-2.5, 0, 0);
+			}
+			else if ((keyIsDown[GLFW_KEY_D] && keyWasDown[GLFW_KEY_D]) || (keyIsDown[GLFW_KEY_RIGHT] && keyWasDown[GLFW_KEY_RIGHT]))
+			{
+				vel4 = glm::vec3(2.5, 0, 0);
+			}
+			else
+			{
+				objs[3].rigidBody.velocity = glm::vec3(0, 0, 0);
+			}
 
-		if(objs[3].collidesWith(objs[0]))
-		{
-			cout << "red Collision" << endl;
-			objs[0].transform.loc.y = 0.9;
-			objs[0].rigidBody.velocity = glm::vec3(0, 0, 0);
+			objs[3].addForce(vel4, deltaTime);
+			cout << objs[3].transform.loc.x << ", " << objs[3].transform.loc.y << ", " << objs[3].transform.loc.z << endl;
+
+			if (objs[3].collidesWith(objs[0]))
+			{
+				cout << "red Collision" << endl;
+				objs[0].transform.loc.y = 0.9;
+				objs[0].rigidBody.velocity = glm::vec3(0, 0, 0);
+
+			}
+			if (objs[3].collidesWith(objs[1]))
+			{
+				cout << " blue Collision" << endl;
+				objs[1].transform.loc.y = 0.9;
+				objs[1].rigidBody.velocity = glm::vec3(0, 0, 0);
+
+			}
+			if (objs[3].collidesWith(objs[2]))
+			{
+				cout << "yellow Collision" << endl;
+				objs[2].transform.loc.y = 0.9;
+				objs[2].rigidBody.velocity = glm::vec3(0, 0, 0);
+
+			}
+			if (objs[3].collidesWith(objs[5]))
+			{
+				cout << "purple Collision" << endl;
+				objs[5].transform.loc.y = 1.5;
+				objs[5].rigidBody.velocity = glm::vec3(0, 0, 0);
+
+			}
+			if (objs[3].collidesWith(objs[6]))
+			{
+				cout << "yellow Collision" << endl;
+				objs[6].transform.loc.y = 1.3;
+				objs[6].rigidBody.velocity = glm::vec3(0, 0, 0);
+
+			}
 
 		}
-		if (objs[3].collidesWith(objs[1]))
-		{
-			cout << " blue Collision" << endl;
-			objs[1].transform.loc.y = 0.9;
-			objs[1].rigidBody.velocity = glm::vec3(0, 0, 0);
-
-		}
-		if (objs[3].collidesWith(objs[2]))
-		{
-			cout << "yellow Collision" << endl;
-			objs[2].transform.loc.y = 0.9;
-			objs[2].rigidBody.velocity = glm::vec3(0, 0, 0);
-
-		}
-
 		glClear(GL_COLOR_BUFFER_BIT| GL_DEPTH_BUFFER_BIT);
 
-		////Projection Camera Matrix Stuff
-
-		////View Matrix
-		//vec3 camLoc = { 0,0,2 };
-		//vec3 camRot = { 0,0,0 };
-
-		//glm::mat3 rotMat = (glm::mat3)glm::yawPitchRoll(camRot.y, camRot.x, camRot.z);
-
-		//vec3 eye = camLoc;
-		//vec3 center = eye + rotMat * vec3(0, 0, -1);
-		//vec3 up = rotMat * vec3(0, 1, 0);
-
-		//mat4 lookAtMat = glm::lookAt(eye, center, up);
-
-		////perspective projection matrix
-		//float zoom = 1.0f;
-		//int width = 800;
-		//int height = 600;
-
-		//float fovy = 3.14159f * .4f / zoom;
-		//float aspect = (float)width / (float)height;
-		//float zNear = .01f;
-		//float zFar = 1000.f;
-
-		//mat4 perspectiveMat = glm::perspective(fovy, aspect, zNear, zFar);
-
-		///*mat4 cameraMat =
-		//{
-		//	1,0,0,0,
-		//	0,1,0,0,
-		//	0,0,1,0,
-		//	0,0,0,1
-		//};*/
-
-		//mat4 cameraMat = perspectiveMat * lookAtMat;
-
-		//glUniformMatrix4fv(3, 1, false, &cameraMat[0][0]); //sends cameraMat to vertex shader
-		///////////////////////////////////////////////////////////////
 
 		if (FPSEnable)
 		{
@@ -323,33 +268,65 @@ bool Engine::gameLoop()
 			camera->Update(vec3(0, 0, 0), deltaTime);
 		}
 
-		objs[0].transform.world = translate(objs[0].transform.loc)* glm::yawPitchRoll(objs[0].transform.rot.y, objs[0].transform.rot.x, objs[0].transform.rot.z) * scale(objs[0].transform.size);
-		objs[1].transform.world = translate(objs[1].transform.loc)* glm::yawPitchRoll(objs[1].transform.rot.y, objs[1].transform.rot.x, objs[1].transform.rot.z) * scale(objs[1].transform.size);
-		objs[2].transform.world = translate(objs[2].transform.loc)* glm::yawPitchRoll(objs[2].transform.rot.y, objs[2].transform.rot.x, objs[2].transform.rot.z) * scale(objs[2].transform.size);
-		objs[3].transform.world = translate(objs[3].transform.loc)* glm::yawPitchRoll(objs[3].transform.rot.y, objs[3].transform.rot.x, objs[3].transform.rot.z) * scale(objs[3].transform.size);
-		objs[4].transform.world = translate(objs[4].transform.loc)* glm::yawPitchRoll(objs[4].transform.rot.y, objs[4].transform.rot.x, objs[4].transform.rot.z) * scale(objs[4].transform.size);
+		if (gameStart == true)
+		{
+			for (int i = 0; i < 7; i++)
+			{
+				objs[i].transform.world = translate(objs[i].transform.loc)* glm::yawPitchRoll(objs[i].transform.rot.y, objs[i].transform.rot.x, objs[i].transform.rot.z) * scale(objs[i].transform.size);
+			}
 
+			glUniformMatrix4fv(3, 1, false, &objs[4].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[4].texture.texID);
+			gameModels[3].render();
 
-		glUniformMatrix4fv(3, 1, false, &objs[4].transform.world[0][0]);
-		glBindTexture(GL_TEXTURE_2D, objs[4].texture.texID);
-		gameModels[3].render();
+			////render game objects
+			glUniformMatrix4fv(3, 1, false, &objs[0].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[0].texture.texID);
+			gameModels[2].render();
+			//
+			glUniformMatrix4fv(3, 1, false, &objs[1].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[1].texture.texID);
+			gameModels[2].render();
 
-		////render game objects
-		glUniformMatrix4fv(3, 1, false, &objs[0].transform.world[0][0]);
-		glBindTexture(GL_TEXTURE_2D, objs[0].texture.texID);
-		gameModels[2].render();
-		//
-		glUniformMatrix4fv(3, 1, false, &objs[1].transform.world[0][0]);
-		glBindTexture(GL_TEXTURE_2D, objs[1].texture.texID);
-		gameModels[2].render();
+			glUniformMatrix4fv(3, 1, false, &objs[2].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[2].texture.texID);
+			gameModels[2].render();
 
-		glUniformMatrix4fv(3, 1, false, &objs[2].transform.world[0][0]);
-		glBindTexture(GL_TEXTURE_2D, objs[2].texture.texID);
-		gameModels[2].render();
+			glUniformMatrix4fv(3, 1, false, &objs[3].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[3].texture.texID);
+			gameModels[4].render();
 
-		glUniformMatrix4fv(3, 1, false, &objs[3].transform.world[0][0]);
-		glBindTexture(GL_TEXTURE_2D, objs[3].texture.texID);
-		gameModels[4].render();
+			glUniformMatrix4fv(3, 1, false, &objs[5].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[5].texture.texID);
+			gameModels[2].render();
+
+			glUniformMatrix4fv(3, 1, false, &objs[6].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[6].texture.texID);
+			gameModels[2].render();
+		}
+		else
+		{
+			objs[4].transform.world = translate(objs[4].transform.loc)* glm::yawPitchRoll(objs[4].transform.rot.y, objs[4].transform.rot.x, objs[4].transform.rot.z) * scale(objs[4].transform.size);
+			objs[7].transform.world = translate(objs[7].transform.loc)* glm::yawPitchRoll(objs[7].transform.rot.y, objs[7].transform.rot.x, objs[7].transform.rot.z) * scale(objs[7].transform.size);
+			objs[8].transform.world = translate(objs[8].transform.loc)* glm::yawPitchRoll(objs[8].transform.rot.y, objs[8].transform.rot.x, objs[8].transform.rot.z) * scale(objs[8].transform.size);
+			
+			glUniformMatrix4fv(3, 1, false, &objs[4].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[4].texture.texID);
+			gameModels[3].render();
+			
+			glUniformMatrix4fv(3, 1, false, &objs[7].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[7].texture.texID);
+			gameModels[3].render();
+
+			glUniformMatrix4fv(3, 1, false, &objs[8].transform.world[0][0]);
+			glBindTexture(GL_TEXTURE_2D, objs[8].texture.texID);
+			gameModels[3].render();
+
+			if(keyIsDown[GLFW_KEY_ENTER])
+			{
+				gameStart = true;
+			}
+		}
 
 		//gameModel.render();
 		vec3 lightLoc = vec3(0, 8, -5);
@@ -380,20 +357,33 @@ bool Engine::gameLoop()
 				FPSEnable = true;
 			}
 		}
-		if(objs[0].transform.loc.y < -1 )
+		if (gameStart == true)
 		{
-			objs[0].transform.loc.y = 0.9;
-			objs[0].rigidBody.velocity = glm::vec3(0,0,0);
-		}
-		if (objs[1].transform.loc.y < -1)
-		{
-			objs[1].transform.loc.y = 0.9;
-			objs[1].rigidBody.velocity = glm::vec3(0, 0, 0);
-		}
-		if (objs[2].transform.loc.y < -1)
-		{
-			objs[2].transform.loc.y = 0.9;
-			objs[2].rigidBody.velocity = glm::vec3(0, 0, 0);
+			if (objs[0].transform.loc.y < -1)
+			{
+				objs[0].transform.loc.y = 2;
+				objs[0].rigidBody.velocity = glm::vec3(0, 0, 0);
+			}
+			if (objs[1].transform.loc.y < -1)
+			{
+				objs[1].transform.loc.y = 1.9;
+				objs[1].rigidBody.velocity = glm::vec3(0, 0, 0);
+			}
+			if (objs[2].transform.loc.y < -1.1)
+			{
+				objs[2].transform.loc.y = 1.8;
+				objs[2].rigidBody.velocity = glm::vec3(0, 0, 0);
+			}
+			if (objs[5].transform.loc.y < -1)
+			{
+				objs[5].transform.loc.y = 1.5;
+				objs[5].rigidBody.velocity = glm::vec3(0, 0, 0);
+			}
+			if (objs[6].transform.loc.y < -1)
+			{
+				objs[6].transform.loc.y = 1.7;
+				objs[6].rigidBody.velocity = glm::vec3(0, 0, 0);
+			}
 		}
 	}
 	
