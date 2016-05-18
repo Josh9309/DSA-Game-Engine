@@ -23,10 +23,6 @@ namespace {
 	}
 }
 
-struct Vertex {
-	glm::vec3 loc;
-	glm::vec2 uv;
-};
 
 /*struct Transform {
 	glm::vec3 loc;
@@ -92,84 +88,33 @@ bool Engine::init()
 	//Some Graphic Techniques wont work with this on
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_DEPTH_TEST);
 
 	currentTime = glfwGetTime();
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // turns on wireframe
+
+	gameModels[0] = Model("sphere.obj");
+	gameModels[1] = Model("box.obj");
+	gameModels[2] = Model("fruit.obj");
+	gameModels[3] = Model("quad.obj");
+	gameModels[4] = Model("Googly_Eye_Bucket_Guy.obj");
+
 	return true;
 }
 
-bool Engine::bufferModel()
+bool Engine::bufferModels()
 {
+	bool modelsBuffered = true;
 
-	std::vector<glm::vec3> locs =
+	for (int i = 0; i < 5; i++)
 	{
-		{ 1,1,0 },
-		{ -1, 1,0 },
-		{ -1,-1,0 },
-		{ 1,-1,0 }
-	};
-
-	std::vector<unsigned int> locInds =
-	{
-		0, 1,2,
-		0, 2,3
-	};
-
-	std::vector<glm::vec2> uvs = 
-	{
-		{1,1},
-		{0,1},
-		{0,0},
-		{1,0}
-	};
-
-	std::vector<unsigned int> uvInds =
-	{
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	vertCount = locInds.size();
-
-	std::vector<Vertex> vertBufData(vertCount);
-	for (unsigned int i = 0; i < vertCount; i++)
-	{
-		vertBufData[i].loc = locs[locInds[i]];
-		vertBufData[i].uv = uvs[uvInds[i]];
+		if(gameModels[i].Buffer() == false)
+		{
+			return false;
+		}
 	}
-
-	
-
-	glGenVertexArrays(1, &vertArr);
-	glGenBuffers(1, &vertBuf);
-
-	glBindVertexArray(vertArr);
-	glBindBuffer(GL_ARRAY_BUFFER, vertBuf);
-
-	glBufferData(GL_ARRAY_BUFFER, //where to copy to
-		sizeof(Vertex) * vertCount, //# bytes to copy
-		&vertBufData[0], //where to copy from
-		GL_STATIC_DRAW); //"hint to OpenGL
-
-	//Location
-	glEnableVertexAttribArray(0); //Attribute index - 0
-	glVertexAttribPointer(
-		0, //Attribute index - 0 in this case
-		3, //Number of components (x,y,z)
-		GL_FLOAT, //Type of data
-		GL_FALSE, //should we normalize the data
-		sizeof(Vertex), // stride (bytes per vertex)
-		0); // offset to this attribute
-
-	//UV 
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(
-		1, //Attribute index - 0 in this case
-		2, //Number of components (x,y,z)
-		GL_FLOAT, //Type of data
-		GL_FALSE, //should we normalize the data
-		sizeof(Vertex), // stride (bytes per vertex)
-		(void*)sizeof(glm::vec3)); // offset to this attribute
 	return true;
+	
 }
 
 bool Engine::gameLoop()
@@ -185,7 +130,10 @@ bool Engine::gameLoop()
 	Texture redFruit = Texture("redFruit.png");
 	Texture blueFruit = Texture("blueFruit.png");
 	Texture yellowFruit = Texture("yellowFruit.png");
-	Texture player = Texture("player.png");
+	Texture blue3DFruit = Texture("BlueFruitTextureMap.tga");
+	Texture red3DFruit = Texture("RedFruitTextureMap.tga");
+	Texture yellow3DFruit = Texture("YellowFruitTextureMap.tga");
+	Texture player = Texture("GooglyTextureMap.tga");
 	Texture forest = Texture("forest.jpg");
 
 	/*player.LoadTexture();
@@ -193,25 +141,29 @@ bool Engine::gameLoop()
 	yellowFruit.LoadTexture();
 	forest.LoadTexture();*/
 
+	//blue3DFruit.LoadTexture();
+
 	//camera creation
 	camera = new Camera();
 
 	//object creation
 	GameObject * objs = new GameObject[5];
 
-	objs[0] = GameObject(redFruit, vec3(-.60, .30, 0), vec3(0, 0, 0), vec3(.1, .1, 1), axis_Aligned_Bounding_Box);
-	objs[1] = GameObject(blueFruit, vec3(.6, .6, 0), vec3(0, 0, 0), vec3(.10, .10, 1), axis_Aligned_Bounding_Box);
+	objs[0] = GameObject(red3DFruit, vec3(-.60, .50, 0), vec3(0, 0, 0), vec3(.1, .1, .1), axis_Aligned_Bounding_Box);
+	objs[1] = GameObject(blue3DFruit, vec3(.6, .8, 0), vec3(0, 0, 0), vec3(.1, .1, .1), axis_Aligned_Bounding_Box);
 
-	objs[2] = GameObject(yellowFruit, vec3(0, .5, 0), vec3(0, 0, 0), vec3(.10, .10, 1), axis_Aligned_Bounding_Box);
+	objs[2] = GameObject(yellow3DFruit, vec3(0, .9, 0), vec3(0, 10, 0), vec3(.1, .1, .1), axis_Aligned_Bounding_Box);
 
-	objs[3] = GameObject(player, vec3(0, -.5, 0), vec3(0, 0, 0), vec3(.20, .30, 1), axis_Aligned_Bounding_Box);
+	objs[3] = GameObject(player, vec3(0, -.7, 0), vec3(0, 0, 0), vec3(.3, .3, .35), axis_Aligned_Bounding_Box);
 
-	objs[4] = GameObject(forest, vec3(0, 0, 0), vec3(0, 0, 0), vec3(1, 1, 1), colliderless);
+	objs[4] = GameObject(forest, vec3(0, 0, -1), vec3(0, 0, 0), vec3(3, 2.5, .1), colliderless);
 
 	for (int i = 0; i < 5; i++)
 	{
 		objs[i].texture.LoadTexture();
 	}
+
+	
 
 	/*redFruit.LoadTexture();
 	player.LoadTexture();
@@ -226,9 +178,9 @@ bool Engine::gameLoop()
 	glfwSetKeyCallback(GLFWwindowPtr, keyCallBack);
 
 	//clear canvas
-	glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
+	//glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 
-	
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	//game loop until the user closes the window
 	while (!glfwWindowShouldClose(GLFWwindowPtr))
 	{
@@ -257,26 +209,26 @@ bool Engine::gameLoop()
 		}
 
 		objs[3].addForce(vel4, deltaTime);
-		cout << objs[1].transform.loc.x << ", " << objs[1].transform.loc.y << ", " << objs[1].transform.loc.z << endl;
+		cout << objs[3].transform.loc.x << ", " << objs[3].transform.loc.y << ", " << objs[3].transform.loc.z << endl;
 
 		if(objs[3].collidesWith(objs[0]))
 		{
 			cout << "red Collision" << endl;
-			objs[0].transform.loc.y = 0.5;
+			objs[0].transform.loc.y = 0.9;
 			objs[0].rigidBody.velocity = glm::vec3(0, 0, 0);
 
 		}
 		if (objs[3].collidesWith(objs[1]))
 		{
 			cout << " blue Collision" << endl;
-			objs[1].transform.loc.y = 0.5;
+			objs[1].transform.loc.y = 0.9;
 			objs[1].rigidBody.velocity = glm::vec3(0, 0, 0);
 
 		}
 		if (objs[3].collidesWith(objs[2]))
 		{
 			cout << "yellow Collision" << endl;
-			objs[2].transform.loc.y = 0.5;
+			objs[2].transform.loc.y = 0.9;
 			objs[2].rigidBody.velocity = glm::vec3(0, 0, 0);
 
 		}
@@ -380,34 +332,26 @@ bool Engine::gameLoop()
 
 		glUniformMatrix4fv(2, 1, false, &objs[4].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[4].texture.texID);
-		glBindVertexArray(vertArr);
-		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+		gameModels[3].render();
 
-
-
+		////render game objects
 		glUniformMatrix4fv(2, 1, false, &objs[0].transform.world[0][0]);
-
-		//render game objects
 		glBindTexture(GL_TEXTURE_2D, objs[0].texture.texID);
-		glBindVertexArray(vertArr);
-		glDrawArrays(GL_TRIANGLES, 0, vertCount);
-		
+		gameModels[2].render();
+		//
 		glUniformMatrix4fv(2, 1, false, &objs[1].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[1].texture.texID);
-		glBindVertexArray(vertArr);
-		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+		gameModels[2].render();
 
 		glUniformMatrix4fv(2, 1, false, &objs[2].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[2].texture.texID);
-		glBindVertexArray(vertArr);
-		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+		gameModels[2].render();
 
 		glUniformMatrix4fv(2, 1, false, &objs[3].transform.world[0][0]);
 		glBindTexture(GL_TEXTURE_2D, objs[3].texture.texID);
-		glBindVertexArray(vertArr);
-		glDrawArrays(GL_TRIANGLES, 0, vertCount);
+		gameModels[4].render();
 
-		
+		//gameModel.render();
 		
 
 		//Swap the front (what the screen displays) and back (what OpenGL draws to) buffers.
@@ -436,17 +380,17 @@ bool Engine::gameLoop()
 		}
 		if(objs[0].transform.loc.y < -1 )
 		{
-			objs[0].transform.loc.y = 0.5;
+			objs[0].transform.loc.y = 0.9;
 			objs[0].rigidBody.velocity = glm::vec3(0,0,0);
 		}
 		if (objs[1].transform.loc.y < -1)
 		{
-			objs[1].transform.loc.y = 0.5;
+			objs[1].transform.loc.y = 0.9;
 			objs[1].rigidBody.velocity = glm::vec3(0, 0, 0);
 		}
 		if (objs[2].transform.loc.y < -1)
 		{
-			objs[2].transform.loc.y = 0.5;
+			objs[2].transform.loc.y = 0.9;
 			objs[2].rigidBody.velocity = glm::vec3(0, 0, 0);
 		}
 	}

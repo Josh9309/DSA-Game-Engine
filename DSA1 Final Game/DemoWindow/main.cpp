@@ -16,7 +16,7 @@ int main()
 		return -1;
 	}
 
-	if (train.bufferModel() == false)
+	if (train.bufferModels() == false)
 	{
 		return -1;
 	}

@@ -6,6 +6,7 @@
 #include "ShaderManager.h"
 #include "Camera.h"
 #include "GameObject.h"
+#include "Model.h"
 
 #include <string>
 #include <iostream>
@@ -25,21 +26,21 @@ public:
 	Engine();
 	~Engine();
 	bool init();
-	bool bufferModel();
+	bool bufferModels();
 	bool gameLoop();
 	bool useShaders();
 	bool collides();
 	
 private:
 	GLFWwindow* GLFWwindowPtr;
-	GLuint vertArr;
-	GLuint vertBuf;
-	unsigned int vertCount;
+	
+	
 	ShaderManager shademanage;
 	GLfloat deltaTime;
 	GLfloat currentTime;
 	GLfloat previousFrameTime;
 	Camera* camera;
+	Model* gameModels = new Model[5];
 	bool FPSEnable;
 };
 
